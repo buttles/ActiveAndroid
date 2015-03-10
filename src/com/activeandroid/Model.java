@@ -177,7 +177,7 @@ public abstract class Model {
 
 	// Model population
 
-	public final void loadFromCursor(Cursor cursor) {
+	public void loadFromCursor(Cursor cursor) {
         /**
          * Obtain the columns ordered to fix issue #106 (https://github.com/pardom/ActiveAndroid/issues/106)
          * when the cursor have multiple columns with same name obtained from join tables.
