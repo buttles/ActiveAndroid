@@ -46,7 +46,9 @@ public abstract class Model {
 
 	private final TableInfo mTableInfo;
 	private final String idName;
-	//////////////////////////////////////////////////////////////////////////////////////
+    public static final String _ID = "_id"; // For remote IDs
+
+    //////////////////////////////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
 	//////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +64,10 @@ public abstract class Model {
 	public final Long getId() {
 		return mId;
 	}
+
+    public int getRemoteId() {
+        return 0;
+    }
 
 	public final void delete() {
 		Cache.openDatabase().delete(mTableInfo.getTableName(), idName+"=?", new String[] { getId().toString() });
@@ -104,7 +110,9 @@ public abstract class Model {
 				// TODO: Find a smarter way to do this? This if block is necessary because we
 				// can't know the type until runtime.
 				if (value == null) {
-					values.putNull(fieldName);
+                    if (!fieldName.equals(idName)) {
+                        values.putNull(fieldName);
+                    }
 				}
 				else if (fieldType.equals(Byte.class) || fieldType.equals(byte.class)) {
 					values.put(fieldName, (Byte) value);
@@ -152,7 +160,10 @@ public abstract class Model {
 		}
 
 		if (mId == null) {
-			mId = db.insert(mTableInfo.getTableName(), null, values);
+            int affected = db.update(mTableInfo.getTableName(), values, _ID + "=" + getRemoteId(), null);
+            if (affected == 0) {
+                mId = db.insert(mTableInfo.getTableName(), null, values);
+            }
 		}
 		else {
 			db.update(mTableInfo.getTableName(), values, idName+"=" + mId, null);
