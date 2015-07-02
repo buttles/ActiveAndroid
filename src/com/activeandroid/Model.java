@@ -160,7 +160,10 @@ public abstract class Model {
 		}
 
 		if (mId == null) {
-            int affected = db.update(mTableInfo.getTableName(), values, _ID + "=" + getRemoteId(), null);
+            int affected = 0;
+            if (getRemoteId() != 0) {
+                affected = db.update(mTableInfo.getTableName(), values, _ID + "=" + getRemoteId(), null);
+            }
             if (affected == 0) {
                 mId = db.insert(mTableInfo.getTableName(), null, values);
             }
